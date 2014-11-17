@@ -5,7 +5,7 @@ A VHDL and SystemVerilog implementation of the 128-bit version of the [Advanced
 Encryption Standard
 (AES)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf), targeting
 high-throughput applications. The example has been developed in order to serve
-as an extened example for a VLSI front-end design accompanying the book by
+as an extended example for a VLSI front-end design accompanying the book by
 H. Kaeslin entitled [*Top-Down Digital VLSI
 Design*](http://store.elsevier.com/product.jsp?isbn=9780128007303).
 
@@ -25,13 +25,14 @@ simulation and synthesis scripts written in [Tcl](http://www.tcl.tk/). The follo
 been used in order to realize the designs:
 
 - **Simulator:** *Questa Sim 10.3a* by *Mentor Graphics*
-- ** Synthesizer:** *Design Compiler Version 2013.12* by *Synopsys*
+- **Synthesizer:** *Design Compiler Version 2013.12* by *Synopsys*
 
 Synthesis results are presented for a mature 65nm CMOS technology by United
-Microelectronics Corporation (UMC) including a simple area/time tradeoff for
-certain timing constraints as shown in the following image:
+Microelectronics Corporation (UMC). We also include a simple area/time tradeoff
+for certain timing constraints for different S-box implementaions as shown in
+the following image:
 
-![AT plot of AES S-box evaluation](https://github.com/mbgh/aes128-hdl/blob/master/at_plot_sbox_eval.png)
+->![AT plot of AES S-box evaluation](https://github.com/mbgh/aes128-hdl/blob/master/at_plot_sbox_eval.png)<-
 
 Summarizing, with the present AES-128 front-end design example we demonstrate:
 
@@ -48,8 +49,9 @@ Documentation
 -------------
 
 A more detailed documentation of the AES-128 architecture is available
-[here](http://blabla.pdf). Moreover, documentations of the synthesizeable
-[VHDL](http://blabla) and the [SystemVerilog](http://blabla) source code can be
-obtained. We also provide a brief documentation of the [verification
-environment](http://blabla) based on [UVM](http://blabla).
+[here](https://github.com/mbgh/aes128-hdl/blob/master/doc/doc/aes128-doc.pdf). Moreover,
+documentations of the synthesizeable [VHDL](http://blabla) and the
+[SystemVerilog](http://blabla) source code can be obtained. We also provide a
+brief documentation of the [verification environment](http://blabla) based on
+[UVM](https://en.wikipedia.org/wiki/Universal_Verification_Methodology).
 
