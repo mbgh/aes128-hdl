@@ -1,2 +1,6 @@
 # Doxygen-generated HTML documentation of VHDL code
-./doc/hdl/vhdl/html
+/doc/hdl/vhdl/html
+# Doxygen-generated HTML documentation of the SystemVerilog source code.
+/doc/hdl/sv/html
+# Doxygen-generated HTML documentation of the UVM verification environment source code.
+/doc/hdl/tb/html

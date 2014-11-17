@@ -10,7 +10,7 @@ doc:
 	$(BIN)/doxygen $(DESIGN).Doxyfile
 
 view:
-	firefox ./html/index.html
+	firefox ./html/vhdl/index.html
 
 clean:
-	rm -rf ./html
+	rm -rf ./html/vhdl

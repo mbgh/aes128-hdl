@@ -50,8 +50,10 @@ Documentation
 
 A more detailed documentation of the AES-128 architecture is available
 [here](https://github.com/mbgh/aes128-hdl/blob/master/doc/doc/aes128-doc.pdf). Moreover,
-documentations of the synthesizeable [VHDL](http://blabla) and the
-[SystemVerilog](http://blabla) source code can be obtained. We also provide a
-brief documentation of the [verification environment](http://blabla) based on
-[UVM](https://en.wikipedia.org/wiki/Universal_Verification_Methodology).
+documentations of the synthesizeable
+[VHDL](https://mbgh.github.io/aes128-hdl/vhdl/index.html) and the
+[SystemVerilog](https://mbgh.github.io/aes128-hdl/sv/index.html) source code can
+be obtained. We also provide a brief documentation of the [verification
+environment](http://blabla) based on
+[UVM](https://mbgh.github.io/aes128-hdl/tb/index.html).
 
