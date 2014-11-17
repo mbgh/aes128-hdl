@@ -31,7 +31,7 @@ Synthesis results are presented for a mature 65nm CMOS technology by United
 Microelectronics Corporation (UMC) including a simple area/time tradeoff for
 certain timing constraints as shown in the following image:
 
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![AT plot of AES S-box evaluation](https://github.com/mbgh/aes128-hdl/blob/master/at_plot_sbox_eval.png)
 
 Summarizing, with the present AES-128 front-end design example we demonstrate:
 
