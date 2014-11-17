@@ -1,108 +1,55 @@
-StdLogicVector
-==============
+AES-128
+=======
 
-An easy to use C++ class, offering arbitrary-precision integer arithmetic for
-basic operations often required during the development of hardware designs. The
-`StdLogicVector` class provides a wrapper around the [GMP](https://gmplib.org/)
-library, which should simplify the development of software models for hardware
-designers in the field of cryptographic applications.
+A VHDL and SystemVerilog implementation of the 128-bit version of the [Advanced
+Encryption Standard
+(AES)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf), targeting
+high-throughput applications. The example has been developed in order to serve
+as an extened example for a VLSI front-end design accompanying the book by
+H. Kaeslin entitled [*Top-Down Digital VLSI
+Design*](http://store.elsevier.com/product.jsp?isbn=9780128007303).
 
-Motivation
-----------
-
-When developing hardware designs in the field of cryptographic applications, it
-is pretty common to work with large integers (128bits and way beyond). While
-hardware description languages (HDLs), like
-[VHDL](http://en.wikipedia.org/wiki/VHDL), provide arbitrary-precision
-arithmetic based on data types such as `std_logic_vector` and the like, writing
-software models for these designs often requires custom-made solutions or the
-use of third party libraries.
-
-In order to simplify the development of software models, I have put together the
-`StdLogicVector` class, which is a small wrapper around the
-[GMP](https://gmplib.org/) library, offering arbitrary-precision arithmetic for
-operations frequently used in the design of hardware architectures (bit-wise
-operations such as those of logic gates, arithmetic functions, etc.).
-
-Example
+Summary
 -------
 
-Everything, what can be done with the `StdLogicVector` class, can, of course,
-also be done with plain [GMP](https://gmplib.org/) data types and its
-functions. However, `StdLogicVector` offers a more intuitive application
-(somewhat similar to the
-[`BigInteger`](http://docs.oracle.com/javase/6/docs/api/java/math/BigInteger.html)
-class of Java), which allows to concatenate operations like the following:
+Designing and developing a hardware architecture is a complex task. The book [*Top-Down Digital VLSI
+Design*](http://store.elsevier.com/product.jsp?isbn=9780128007303) provides all
+the information required to succeed with the front-end of a design. However, it
+does not offer to space to include a more exhaustive example like this AES
+implementation.
 
-```cpp
-// Create a four-bit integer 'a' with value 5 and an eight-bit integer 'b' with
-// value 210, initialized using binary representation.
-StdLogicVector a = StdLogicVector(5, 4);
-StdLogicVector b = StdLogicVector("11010010", 2, 8);
+This project offers a VHDL and a SystemVerilog implementation of the AES-128
+algorithm. It contains synthesizeable RTL code in both languages and provides
+simulation and synthesis scripts written in [Tcl](http://www.tcl.tk/). The following
+[EDA](https://en.wikipedia.org/wiki/Electronic_design_automation) tools have
+been used in order to realize the designs:
 
-// Perform some operations on 'b'.
-b.ShiftRight(2).TruncateAfter(4).Xor(a);
-```
+- **Simulator:** *Questa Sim 10.3a* by *Mentor Graphics*
+- ** Synthesizer:** *Design Compiler Version 2013.12* by *Synopsys*
 
-Usage
------
+Synthesis results are presented for a mature 65nm CMOS technology by United
+Microelectronics Corporation (UMC) including a simple area/time tradeoff for
+certain timing constraints as shown in the following image:
 
-In order to clearly separate the `StdLogicVector` class from any other project I
-am using it in, I normally build a shared library from the sources and link my
-software models against that library. If you want to do something similar, you
-may stick to the following steps (tested on a [CentOS](http://www.centos.org/)
-6.4 installation):
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
 
-#### Prerequisites
+Summarizing, with the present AES-128 front-end design example we demonstrate:
 
-1. Make sure that you have available a [GMP](https://gmplib.org/) library
-against which you can link the `StdLogicVector` sources later on (although it
-should work with earlier versions as well, the version I usually use is
-*6.0.0a*).
+- Functionally identical RTL synthesis models in both VHDL and SystemVerilog
+- Architectural tradeoffs and a small selection of optimization techniques
+- Timing constraints and their impact on the synthesis outcome (*AT*-plot)
+- A self-checking testbench that applies directed and random test suites
+- Organizing a verification environment into re-usable modules using UVM
+- Co-simulating a VHDL model with a SystemVerilog testbench
+- Shell and Tcl scripts for governing simulation and synthesis runs
 
-2. Make sure that you have [Google's C++ Testing
-Framework](http://code.google.com/p/googletest/) in order to run the unit tests,
-which come with the `StdLogicVector` class.
-
-#### Building the library
-
-1. [Download](https://github.com/mbgh/stdlogicvector/archive/master.zip) the
-latest version of the sources.
-
-2. Take a look at the provided Makefile and adapt it according to your needs (at
-least the paths to the [GMP](https://gmplib.org/) and the [Google
-Test](http://code.google.com/p/googletest/) files will have to be adapted).
-
-3. Finally, build the shared library, as well as the executable running the unit
-tests, and test the library.
-
-```
-make
-make test
-make run
-```
 
 Documentation
 -------------
 
-A documentation of the `StdLogicVector` class, created using
-[Doxygen](http://www.doxygen.org/), is available
-[here](http://mbgh.github.io/stdlogicvector/).
+A more detailed documentation of the AES-128 architecture is available
+[here](http://blabla.pdf). Moreover, documentations of the synthesizeable
+[VHDL](http://blabla) and the [SystemVerilog](http://blabla) source code can be
+obtained. We also provide a brief documentation of the [verification
+environment](http://blabla) based on [UVM](http://blabla).
 
-##FAQ
-
-A couple of questions, which came to my mind when setting up this readme file. 
-
-#### Is the `StdLogicVector` class intended for any special purpose?
-
-No, I have written the `StdLogicVector` class to simplify working with
-arbitrary-precision integers **in general**, without having any special purpose
-in mind. Therefore, you will most-likely miss some operations when using it for
-your own needs.
-
-#### Which is the "final" version of the `StdLogicVector` class?
-
-There is nothing like a "final version" of this class. I am extending its
-functionality depending on my personal needs (which again depend on the projects
-I am currently working on), which is why there exists (and will most-likely
-never exist) something like a "final" version.
