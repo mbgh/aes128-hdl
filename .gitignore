@@ -2,5 +2,7 @@
 /doc/hdl/vhdl/html
 # Doxygen-generated HTML documentation of the SystemVerilog source code.
 /doc/hdl/sv/html
+/doc/hdl/sv/natdoc
 # Doxygen-generated HTML documentation of the UVM verification environment source code.
 /doc/hdl/tb/html
+/doc/hdl/tb/natdoc

@@ -4,10 +4,10 @@
 ## The directory to be searched recursively for SystemVerilog source files (as
 ## well as supplementary material such as a license file, a summary, etc.) to
 ## be documented using Natural Docs.
-INP = /home/michmueh/projects/vlsi_book_aes/vlsi_book_aes_65nm/sourcecode/src/sv
+INP = /home/michmueh/repos/git/aes128-hdl/src/sv
 
 ## The output directory into which the created documentation should be written.
-OUT = sv_doc
+OUT = html/sv
 
 ## The directory to be used for the project-specific files, which are required
 ## during each run of Natural Docs.
