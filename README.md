@@ -3,7 +3,7 @@ AES-128
 
 A VHDL and SystemVerilog implementation of the 128-bit version of the [Advanced
 Encryption Standard
-(AES)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf), targeting
+(AES)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf) targeting
 high-throughput applications. The example has been developed in order to serve
 as an extended example for a VLSI front-end design accompanying the book by
 H. Kaeslin entitled [*Top-Down Digital VLSI
@@ -28,11 +28,11 @@ been used in order to realize the designs:
 - **Synthesizer:** *Design Compiler Version 2013.12* by *Synopsys*
 
 Synthesis results are presented for a mature 65nm CMOS technology by United
-Microelectronics Corporation (UMC). We also include a simple area/time tradeoff
-for certain timing constraints for different S-box implementaions as shown in
-the following image:
+Microelectronics Corporation ([UMC](http://www.umc.com/)). We also include a
+simple area/time tradeoff for certain timing constraints for different S-box
+implementaions as shown in the following image:
 
-->![AT plot of AES S-box evaluation](https://github.com/mbgh/aes128-hdl/blob/master/at_plot_sbox_eval.png)<-
+![AT plot of AES S-box evaluation](https://github.com/mbgh/aes128-hdl/blob/master/at_plot_sbox_eval.png)
 
 Summarizing, with the present AES-128 front-end design example we demonstrate:
 
