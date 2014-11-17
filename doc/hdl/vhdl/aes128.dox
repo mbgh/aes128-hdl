@@ -1,0 +1,6 @@
+/*! \mainpage AES-128
+ *
+ * Documentation for the VHDL model of the 128-bit version of the Advanced
+ * Encryption Standard (AES).
+ *
+ */

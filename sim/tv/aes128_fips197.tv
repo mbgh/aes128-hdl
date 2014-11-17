@@ -1,0 +1,12 @@
+% File:     ./out/tv/aes128_fips197.tv
+% Author:   Michael Muehlberghuber (mbgh@iis.ee.ethz.ch)
+% Project:  VLSI Book - AES-128 Example
+% Created:  2014-06-05, 14:17:37
+% Content:  Test vectors for AES-128 from the appendix of FIPS PUB 197.
+%
+%NewCipherkey_SI (1 bit)
+% Plaintext_DI (128 bit)
+% |                                Cipherkey_DI (128 bit)
+% |                                |                                Ciphertext_DO (128 bit)
+% |                                |                                |
+1 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f 69c4e0d86a7b0430d8cdb78070b4c55a % FIPS PUB197 appendix C.1 test vector.

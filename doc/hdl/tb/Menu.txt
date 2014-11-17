@@ -1,0 +1,103 @@
+Format: 1.52
+
+
+# You can add a title and sub-title to your menu like this:
+# Title: [project name]
+# SubTitle: [subtitle]
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+# You can add a timestamp to your documentation like one of these:
+# Timestamp: Generated on month day, year
+# Timestamp: Updated mm/dd/yyyy
+# Timestamp: Last updated mon day
+#
+#   m     - One or two digit month.  January is "1"
+#   mm    - Always two digit month.  January is "01"
+#   mon   - Short month word.  January is "Jan"
+#   month - Long month word.  January is "January"
+#   d     - One or two digit day.  1 is "1"
+#   dd    - Always two digit day.  1 is "01"
+#   day   - Day with letter extension.  1 is "1st"
+#   yy    - Two digit year.  2006 is "06"
+#   yyyy  - Four digit year.  2006 is "2006"
+#   year  - Four digit year.  2006 is "2006"
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+Title: AES-128
+SubTitle: Verification Environment
+Footer: Copyright (C) 2014 Integrated Systems Laboratory, ETH Zurich
+Timestamp: Updated month day, year
+
+Group: About {
+	File: Summary  (Summary.txt)
+}  # Group: About
+
+Group: Aes128_pkg {
+
+  Group: Agents  {
+	  File: aes128_agent  (aes128_pkg/agnts/custom_ifc_agent/aes128_agent.svh)
+    File: aes128_comparator  (aes128_pkg/agnts/custom_ifc_agent/aes128_comparator.svh)
+    File: aes128_driver  (aes128_pkg/agnts/custom_ifc_agent/aes128_driver.svh)
+    File: aes128_monitor  (aes128_pkg/agnts/custom_ifc_agent/aes128_monitor.svh)
+    File: aes128_predictor  (aes128_pkg/agnts/custom_ifc_agent/aes128_predictor.svh)
+    File: aes128_sequencer  (aes128_pkg/agnts/custom_ifc_agent/aes128_sequencer.svh)
+  }  # Group: Agnts
+			
+  Group: Tansactions  {
+	  File: txn_data  (aes128_pkg/txns/txn_data.svh)
+   	File: txn_request  (aes128_pkg/txns/txn_request.svh)
+	}   # Group: Tansactions
+
+	Group: Sequences  {
+    File: seq_from_file  (aes128_pkg/seqs/seq_from_file.svh)
+  } # Group: Sequences
+
+  File: aes128_config  (aes128_pkg/aes128_config.svh)
+  File: aes128_ifc  (aes128_pkg/aes128_env.svh)
+  File: aes128_ifc  (aes128_pkg/aes128_ifc.sv)
+  File: aes128_pkg  (aes128_pkg/aes128_pkg.sv)
+  File: aes128_test  (aes128_pkg/tests/aes128_test.svh)
+  File: aes128_top  (aes128_pkg/aes128_top.sv)
+  File: aes128_wrapper  (aes128_pkg/aes128_wrapper.sv)
+
+}  # Group: Aes128_pkg
+
+Group: Utils {
+  File: mbgh_macros  (utils/mbgh_macros.svh)
+  File: mbgh_report_server_c  (utils/mbgh_report_server.svh)
+  File: mbgh_utils  (utils/mbgh_utils_pkg.sv)
+}  # Group: Utils
+
+Group: Index  {
+  Index: Everything
+  Class Index: Classes
+  Interface Index: Interfaces
+  Macro Index: Macros
+  Method Index: Methods
+  Module Index: Modules
+  Package Index: Packages
+  Type Index: Types
+}  # Group: Index
+
+Link: Integrated Systems Laboratory, ETH Zurich  (http://iis.ee.ethz.ch/)

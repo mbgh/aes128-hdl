@@ -1,0 +1,235 @@
+/**
+ * Module: aes128
+ * 
+ * The present design implements the cipher of the 128-bit version of the
+ * Advanced Encryption Standard (AES). Since the design targets a
+ * high-throughput implementation, both the key expansion and the actual cipher
+ * are pipeline.
+ *
+ * Inputs and outputs are registered. While the plaintext and the ciphertext
+ * are registered in the top entity, the cipherkey is registered within the key
+ * expansion entity. Due to the input buffering, the actual encryption starts
+ * with a delay of one clock cycle. After that, both the key expansion and the
+ * encryption are executed "in parallel".
+ * 
+ * General Information:
+ * File         - aes128.vhd
+ * Title        - High-throughput implementation of AES-128
+ * Project      - VLSI Book AES-128 Example
+ * Author       - Michael Muehlberghuber (mbgh@iis.ee.ethz.ch)
+ * Company      - Integrated Systems Laboratory, ETH Zurich
+ * Copyright    - Copyright (C) 2014 Integrated Systems Laboratory, ETH Zurich
+ * File Created - 2014-10-16
+ * Last Updated - 2014-10-16
+ * Platform     - Simulation=QuestaSim; Synthesis=Synopsys
+ * Standard     - SystemVerilog 1800-2009
+ * 
+ * Revision Control System Information:
+ * File ID     - $Id: aes128.sv 23 2014-10-20 09:23:20Z u59323933 $
+ * Revision    - $Revision: 23 $
+ * Local Date  - $Date: 2014-10-20 11:23:20 +0200 (Mon, 20 Oct 2014) $
+ * Modified By - $Author: u59323933 $
+ * 
+ * Major Revisions:
+ * 2014-10-16 (v1.0) - Created (mbgh)
+ */
+
+import aes128Pkg::*;
+
+module aes128 (
+	input  logic         Clk_CI,
+	input  logic 	 			 Reset_RBI,
+	input  logic 	 			 Start_SI,
+	input  logic 	 			 NewCipherkey_SI,
+	output logic 				 Busy_SO,
+	input  logic [127:0] Plaintext_DI,
+	input  logic [127:0] Cipherkey_DI,
+	output logic [127:0] Ciphertext_DO );
+
+
+	// --------------------------------------------------------------------------
+	// Type definitions
+	// --------------------------------------------------------------------------
+	/**
+	 * Type: stateArrayType
+	 * An array holding 10 Matrices.
+	 */
+	typedef Matrix stateArrayType [0:9];
+
+
+	// --------------------------------------------------------------------------
+	// Functions
+	// --------------------------------------------------------------------------
+
+	/**
+	 * Function: to_matrix
+	 * Converts a logic[127:0] to a Matrix.
+	 */
+	function Matrix to_matrix ;
+		input logic[127:0] inp;
+	        Matrix result;
+		begin
+			result[0] = to_word(inp[127:96]);
+			result[1] = to_word(inp[95:64]);
+			result[2] = to_word(inp[63:32]);
+			result[3] = to_word(inp[31:0]);
+			to_matrix = result;
+			return result;
+		end
+	endfunction
+
+	// 
+	/**
+	 * Function: to_logic
+	 * Converts a matrix to a logic[127:0]. The 0-th byte of the first word
+   * of the matrix becomes the most significant byte of the std_logic_vector.
+	 */
+	function logic[127:0] to_logic;
+		input Matrix inp;
+		logic [127:0] result;
+		begin
+			result = { inp[0][0], inp[0][1], inp[0][2], inp[0][3],
+                 inp[1][0], inp[1][1], inp[1][2], inp[1][3],
+                 inp[2][0], inp[2][1], inp[2][2], inp[2][3],
+                 inp[3][0], inp[3][1], inp[3][2], inp[3][3] };
+			to_logic = result;
+		end
+	endfunction
+	
+
+	// --------------------------------------------------------------------------
+	// Signals
+	// --------------------------------------------------------------------------
+
+	// Registers
+	logic[127:0]   Plaintext_DN, Plaintext_DP;
+  stateArrayType CipherState_DN, CipherState_DP;
+	Matrix         Ciphertext_DN, Ciphertext_DP;
+	logic [0:10]   EnCipherState_SN, EnCipherState_SP;
+
+  // Some intermediate signals.
+  roundkeyArrayType Roundkeys_D;
+	Matrix LastSubMatrixOut_D;
+	logic 					KeyExpStart_S;
+	logic 					AllCipherStatesDisabled_S;
+	logic 					AllEnCipherStatesOred_S;
+
+	
+	// --------------------------------------------------------------------------
+	// Component instantiations
+	// --------------------------------------------------------------------------
+	keyExpansion keyExpansion_1(
+		.Clk_CI(Clk_CI),
+		.Reset_RBI(Reset_RBI),
+		.Start_SI(KeyExpStart_S),
+		.Cipherkey_DI(Cipherkey_DI),
+		.Roundkeys_DO(Roundkeys_D));
+
+	// S-box of the last round.
+	subMatrix lastSubMatrix (
+		.In_DI(CipherState_DP[9]),
+		.Out_DO(LastSubMatrixOut_D));
+
+	// Perform full rounds (i.e., rounds one to nine).
+	genvar i;
+	generate for (i=1; i<10; i=i+1)
+		begin : gen_cipherRounds
+			cipherRound cipherRounds (
+				.StateIn_DI(CipherState_DP[i-1]),
+				.Roundkey_DI(Roundkeys_D[i]),
+				.StateOut_DO(CipherState_DN[i]));
+		end
+	endgenerate
+
+
+	// --------------------------------------------------------------------------
+  // Next state logic
+	// --------------------------------------------------------------------------
+
+  // Enable plaintext register only when start signal is set.
+  assign Plaintext_DN = (Start_SI == 1'b1) ? Plaintext_DI : Plaintext_DP;
+
+  // The enables for the cipher states are generated by a one-hot encoded shift
+  // register, which gets the start signal as an input.
+	always_comb begin
+		// Otherwise shift the enables such that they are proceeded correctly with
+		// their current pipeline stage (this enables-holding shift register
+		// serves as kind of a shimming register).
+		EnCipherState_SN = { 1'b0, EnCipherState_SP[0:9] };
+
+		if ( Start_SI == 1'b1 ) begin
+			// Start signal is set so shift in a '1'.
+			EnCipherState_SN = { 1'b1, EnCipherState_SP[0:9] };
+		end else if ( AllCipherStatesDisabled_S == 1'b1 ) begin
+			// Since none of the cipher states currently holds a substantial value,
+			// we do not even have to shift in the zeros, but just hold the current
+			// state.
+			EnCipherState_SN = EnCipherState_SP;
+		end
+	end
+	
+  // Perform last round (i.e., round without the "MixColumn" step) and
+  // calculate the final state, which is equal to the ciphertext.
+  assign Ciphertext_DN = (EnCipherState_SP[10] == 1'b1) ? xor_matrix_logic(shift_rows(LastSubMatrixOut_D), Roundkeys_D[10]) : Ciphertext_DP;
+
+  // Perform inital "AddRoundKey".
+  assign CipherState_DN[0] = to_matrix(Roundkeys_D[0] ^ Plaintext_DP);
+
+
+	// --------------------------------------------------------------------------
+  // Compute the signal indicating that none of the cipher state register has
+  // to be enabled, i.e., no new plaintext data is provided at the input.
+  // --------------------------------------------------------------------------
+	assign AllEnCipherStatesOred_S = |EnCipherState_SP;
+	assign AllCipherStatesDisabled_S = ~AllEnCipherStatesOred_S;
+
+
+	// --------------------------------------------------------------------------																			
+  // The key expansion should only be initiated when both the start signal and
+  // the signal indicating a new cipherkey are set.
+	// --------------------------------------------------------------------------
+  assign KeyExpStart_S = Start_SI & NewCipherkey_SI;
+  
+
+	// --------------------------------------------------------------------------																			
+  // Output assignment
+	// --------------------------------------------------------------------------
+  assign Ciphertext_DO = to_logic(Ciphertext_DP);
+  assign Busy_SO       = ~AllCipherStatesDisabled_S;
+
+	
+	// --------------------------------------------------------------------------
+	// Flip flops
+	// --------------------------------------------------------------------------
+	always_ff @(posedge Clk_CI, negedge Reset_RBI) begin
+		if ( ~Reset_RBI ) begin
+			Plaintext_DP     <= 0;
+		 	EnCipherState_SP <= 0;
+		 	CipherState_DP   <= '{ default:0 };
+			Ciphertext_DP    <= '{ default:0 };
+		end else begin
+			// Next state computation for plaintext register is done outside this
+			// process.
+			Plaintext_DP <= Plaintext_DN;
+
+			// Shift register holding the enables for the cipher states.
+			EnCipherState_SP <= EnCipherState_SN;
+
+			// Matrix-wise enables for cipher states.
+			if ( EnCipherState_SP[0] == 1'b1 ) CipherState_DP[0] <= CipherState_DN[0];
+			if ( EnCipherState_SP[1] == 1'b1 ) CipherState_DP[1] <= CipherState_DN[1];
+			if ( EnCipherState_SP[2] == 1'b1 ) CipherState_DP[2] <= CipherState_DN[2];
+			if ( EnCipherState_SP[3] == 1'b1 ) CipherState_DP[3] <= CipherState_DN[3];
+			if ( EnCipherState_SP[4] == 1'b1 ) CipherState_DP[4] <= CipherState_DN[4];
+			if ( EnCipherState_SP[5] == 1'b1 ) CipherState_DP[5] <= CipherState_DN[5];
+			if ( EnCipherState_SP[6] == 1'b1 ) CipherState_DP[6] <= CipherState_DN[6];
+			if ( EnCipherState_SP[7] == 1'b1 ) CipherState_DP[7] <= CipherState_DN[7];
+			if ( EnCipherState_SP[8] == 1'b1 ) CipherState_DP[8] <= CipherState_DN[8];
+			if ( EnCipherState_SP[9] == 1'b1 ) CipherState_DP[9] <= CipherState_DN[9];
+ 
+			// Enable of ciphertext register.
+			if ( EnCipherState_SP[10] == 1'b1 ) Ciphertext_DP <= Ciphertext_DN;
+		end
+	end
+	
+endmodule : aes128
